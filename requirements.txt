@@ -8,3 +8,4 @@ pydantic
 pytz
 requests
 python-multipart
+pymongo
