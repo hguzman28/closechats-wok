@@ -7,7 +7,7 @@ import re
 import datetime
 import sys
 from bson import ObjectId
-import conversaciones2
+import sdkmongo
 import os
 import pandas as pd
 import requests
