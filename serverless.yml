@@ -1,55 +1,72 @@
-service: ${env:NAME_REPOSITORY_CUSTOM}-${sls:stage}
+name: Deploy Lambda Dev Manual
 
-package:
-  individually: true
-
-provider:
-  name: aws
-  memorySize: 1024 # optional, in MB, default is 1024
-  timeout: 900
-  ecr:
-    # In this section you can define images that will be built locally and uploaded to ECR
-    images:
-      appimage:
-        path: ./
-  region: us-east-1
-  endpointType: REGIONAL
-  stage: ${opt:stage, "dev"}
-  iam:
-    role: arn:aws:iam::864673161229:role/lambda_cron_rol
-  deploymentBucket:
-    name: app-vendedor-staging
-
-custom:
-  stages:
-    - dev
-    - prd
-
-functions:
-  app:
-    image:
-      name: appimage
-    name: ${env:NAME_REPOSITORY_CUSTOM}-${sls:stage}
-
-
-    vpc:
-      securityGroupIds:
-        - sg-061a0e3a3e65ad7f3
-      subnetIds:
-        - subnet-062608ece455a5dcc
-        - subnet-0d841902b0e42a389
-    environment:
-      STAGE: ${self:provider.stage}
-
-    events:
-       - http:
-          method: any
-          path: ${env:NAME_REPOSITORY_CUSTOM}
-          cors:
-            headers: '*'
-       - schedule: cron(30 11 * * ? *)
-     
-
-
-
+on:
+  workflow_dispatch:
       
+jobs:
+
+  CI:
+    name: Runner
+    runs-on: ubuntu-latest
+    env:
+      NODE_VERSION: 14.x # used for installing the serverless-python-requirements dependency from NPM
+    strategy:
+      matrix:
+        python-version:
+          - 3.7 # with a build matrix, you can specify a list of python versions to deploy with
+        
+
+
+    steps:
+            # --------- use Python to install Python dependencies and run linter, tests, etc. ---------
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      #-------- Set VAR name
+      - name: Set var name service Lambda
+        run:  echo "NAME_REPOSITORY_CUSTOM=$(echo ${{ github.repository }} | cut -c 11-90)" >> $GITHUB_ENV         
+
+      - name: Echo var name service Lambda
+        run:  echo ${{ env.NAME_REPOSITORY_CUSTOM }}
+
+
+      # --------- Use Node and NPM to install serverless-python-requirements ---------
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install Node dependencies (specifically, serverless-python-requirements)
+        run: npm install
+        
+
+
+      - name: Check File List        
+        run:  |
+         ls -l
+         pwd     
+
+      - name: Serverless Deploy
+        uses: dhollerbach/github-action-serverless-with-python-requirements@master
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+
+
+
+       
