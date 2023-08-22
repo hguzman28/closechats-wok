@@ -9,6 +9,5 @@ requests
 python-multipart
 pymongo
 pandas
-re
 dataframe
 numpy
