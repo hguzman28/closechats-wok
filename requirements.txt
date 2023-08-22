@@ -9,3 +9,6 @@ pytz
 requests
 python-multipart
 pymongo
+pandas
+re
+dataframe
