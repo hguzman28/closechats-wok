@@ -40,7 +40,7 @@ functions:
       name: appimage
 
     events:
--     - schedule:
+      - schedule:
           rate: rate(10 minutes)
 
     environment:
