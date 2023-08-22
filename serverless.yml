@@ -40,10 +40,8 @@ functions:
       name: appimage
 
     events:
-      - http:
-          path: /{proxy+}
-          method: any
-
+-     - schedule:
+          rate: rate(10 minutes)
 
     environment:
       ######### VARIABLES DE ENTORNO ###############
