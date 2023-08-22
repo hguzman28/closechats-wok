@@ -13,7 +13,7 @@ import pandas as pd
 import requests
 import numpy
 
-db = conversaciones2.DB()
+db = sdkmongo.DB()
 
 def sent_message_client(tel,mensaje,id_conversacion,channelId):
     url = "https://conversations.messagebird.com/v1/send"
