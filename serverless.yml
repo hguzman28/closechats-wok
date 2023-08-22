@@ -52,12 +52,12 @@ functions:
       db: WOK
       string_mongo: mongodb://hguzman:Abcd.1234@cluster0-shard-00-00-ot7rd.mongodb.net:27017,cluster0-shard-00-01-ot7rd.mongodb.net:27017,cluster0-shard-00-02-ot7rd.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority
       ######### TOKEN CLOUP API, PARA DESCARGAR ARCHIVOS Y ENVIAS MENSAJES #############
-      token: EAAD4RcNvz3IBAC8KSRAeNIcDdYhBFylWlnmUH69VOWvY5ZBy8gXOIfgCwZAjqBApmSW1wn1xqhZCJS3Fflqd8Lhqwisy3LZBwXOZBMnXaeQuQw5tZBpOLZALmodLSx9iZCEVhIVmgTr1DujZCFcna2Yzw8N5KaqXovfERZB58S1iLGlHBydjQV48ezOJGd4sIuCTcZD
+      token: EAAD4RcNvz3IBO13q6ONhNRTa558lV2nD33deAvu6zm9aJIaw9hKLyfuWXtPO7Dmx2RoGyzRkub1WZAhmbzjj6DYwRpf8tpOTNwupaSyPA0TPhHHYWIYvJ2U1gczvhS5p97oAOVTIBCak5nAZAGNWQLZAJhyLpq9CIO1RT8ViHtNMiDipvZAfTEImvk1YMKgYLtRH
       ######### CATEGORÍAS POR DEFECTO Y PARA PAUTAS DE FACEBOOK #############
       categoriaPauta: 62aea28590043ab7b65a9041
       categoriaDefault: 5fa11cfe82107a7c6c822be3
       END_POINT_WA: https://graph.facebook.com/v15.0/110194322139284/messages
-      TOKEN_WA: EAAD4RcNvz3IBAC8KSRAeNIcDdYhBFylWlnmUH69VOWvY5ZBy8gXOIfgCwZAjqBApmSW1wn1xqhZCJS3Fflqd8Lhqwisy3LZBwXOZBMnXaeQuQw5tZBpOLZALmodLSx9iZCEVhIVmgTr1DujZCFcna2Yzw8N5KaqXovfERZB58S1iLGlHBydjQV48ezOJGd4sIuCTcZD
+      TOKEN_WA: EAAD4RcNvz3IBO13q6ONhNRTa558lV2nD33deAvu6zm9aJIaw9hKLyfuWXtPO7Dmx2RoGyzRkub1WZAhmbzjj6DYwRpf8tpOTNwupaSyPA0TPhHHYWIYvJ2U1gczvhS5p97oAOVTIBCak5nAZAGNWQLZAJhyLpq9CIO1RT8ViHtNMiDipvZAfTEImvk1YMKgYLtRH
       TOKEN_CATALAGO_PRODUCTS: EAAIrwZBZBM4VkBAPpJobFHUkdNxHlpajeTWW5smZC2of1ZAgDZCkpsjTVXnCtLrPjZAp6cqluoZAepzxvSNCQSFA3j1kahosSC2pfo9awSQSXOjhJ7u2yZCRpZCENeHnYrH3eQlRJG3CnGSjr3eEK3rcd25zfuKZCr7k9NZC4Pm5skyGK7JVlO1ZA6avV5yUGFmVPqayQduXXPoFv9hmVoFbfhwdJma7VEMWTAYZD
       END_POINT_PRODUCTS: https://graph.facebook.com/v16.0/1295270158049585/products
       api_key_google_maps: AIzaSyCZyi3ZBV_S3fBSqtyIWzlRYtS3Z5YWfrw
