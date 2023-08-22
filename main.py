@@ -34,28 +34,28 @@ def send_menu_interactive_button(num_client):
 
 
         body={
-            "type": "button",
-            "header": {
+              "type": "button",
+              "header": {
                 "type": "text",
                 "text": "ℹ️"
-            },
-            "body": {
+              },
+              "body": {
                 "text": "Estimado cliente, no hemos recibido respuesta, cerramos esta conversación y estamos atento para volver a atenderte"
-            },
-            "footer": {
+              },
+              "footer": {
                 "text": "Restaurante Wok Q'rrambero 🍜"
-            },
-            "action": {
+              },
+              "action": {
                     "buttons": [
                     {
-                    "type": "reply",
-                    "reply": {
-                        "id": "returnCli",
-                        "title": "Quiero pedir de nuevo" 
+                      "type": "reply",
+                      "reply": {
+                        "id": "returnClien",
+                        "title": "Cotizar o Pedir" 
+                      }
                     }
-                    }
-                ] 
-            }
+                 ] 
+              }
             }
         
         payload = json.dumps({
