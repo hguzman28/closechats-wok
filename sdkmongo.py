@@ -59,7 +59,7 @@ class DB:
             col = db['conversaciones']
 
             lista_itents= self.get_trace_itents(conversacion)
-            name_itent = f'{len(lista_itents)}.{name_itent}'
+            name_itent = f'{name_itent}'
             lista_itents.append(name_itent)
 
             query = {"_id":ObjectId(conversacion)}
