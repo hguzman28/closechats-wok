@@ -109,6 +109,7 @@ def lambda_handler(event, context):
                     print(index, row)
                     mensaje = "Estimado cliente, no obtuvimos respuesta en un tiempo determinado, procedemos a cerrar la conversacion, para consultas puede volver a escribirnos."
                     db.close_conversaciones_inactivos(row['_id'])
+                    db.save_name_itent(row['_id'],"CLIENTE_SIN_RESPUESTA")
                     print(row['origen'])
                     send_menu_interactive_button(row['origen'])
                 else:
