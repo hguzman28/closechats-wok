@@ -34,7 +34,40 @@ class DB:
         db = client["WOK"]
         self.con = db
 
+    def get_trace_itents(self,conversacion):
+        try:
+            print("### get_trace_itents ###")
+            db = self.con
+            col = db['conversaciones']
 
+            query = {"_id":ObjectId(conversacion)}
+      
+            result = col.find_one(query,{"name_itent":1})
+
+            var_name_itent = result.get('name_itent', ["0"])
+
+            return var_name_itent
+       
+        except:
+            print(sys.exc_info())
+
+    def save_name_itent(self,conversacion,name_itent):
+
+        try:
+            print("save_name_itent")
+            db = self.con
+            col = db['conversaciones']
+
+            lista_itents= self.get_trace_itents(conversacion)
+            name_itent = f'{len(lista_itents)}.{name_itent}'
+            lista_itents.append(name_itent)
+
+            query = {"_id":ObjectId(conversacion)}
+            new_state = { "$set": {"name_itent":lista_itents} }   
+            col.update_many(query,new_state)
+       
+        except:
+            print(sys.exc_info())
     def check_conversaciones_inactivos(self):
         print("check_conversaciones_inactivos")
         self.conect()
