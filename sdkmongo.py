@@ -93,7 +93,7 @@ class DB:
         col = db['conversaciones']
 
         query={"_id":ObjectId(id)}
-        new_state = { "$set": { "estado":"ATENDIDO","estadoBot":"ATENDIDO","fechaTerminado":datetime.datetime.now()} }
+        new_state = { "$set": { "estado":"ATENDIDO","estadoBot":"ATENDIDO","fechaTerminado":datetime.datetime.now(), "idx_estado.nombre":"ATENDIDO","idx_estado.clave":2} }
 
         col.update_many(query,new_state)
 
