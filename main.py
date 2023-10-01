@@ -26,7 +26,7 @@ def sent_message_client(tel,mensaje,id_conversacion,channelId):
     db.insert_chatBot(mensaje,id_conversacion,datetime.datetime.now(),None,"text",channelId,"whatsapp",None,"true")
     print(solicitud.text)
 
-def send_menu_interactive_button(num_client):
+def send_menu_interactive_button(num_client,id_conversacion):
     
     try:
         url = "https://graph.facebook.com/v15.0/144272775427424/messages"
@@ -79,6 +79,7 @@ def send_menu_interactive_button(num_client):
 
         
         response = requests.request("POST", url, headers=headers, data=payload)
+        db.insert_chatBot("Estimado cliente, no hemos recibido respuesta, cerramos esta conversación y estamos atento para volver a atenderte",id_conversacion,datetime.datetime.now(),None,"text","","whatsapp",None,"true")
 
         print(response)
     except:
@@ -111,7 +112,7 @@ def lambda_handler(event, context):
                     db.close_conversaciones_inactivos(row['_id'])
                     db.save_name_itent(row['_id'],"CLIENTE_SIN_RESPUESTA")
                     print(row['origen'])
-                    send_menu_interactive_button(row['origen'])
+                    send_menu_interactive_button(row['origen'],row['_id'])
                 else:
                     print("no hay nada q cerrar")
 
