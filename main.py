@@ -31,7 +31,7 @@ def send_menu_interactive_button(num_client,id_conversacion):
     try:
         url = "https://graph.facebook.com/v15.0/144272775427424/messages"
         TOKEN_WA = "EAAD4RcNvz3IBO4Q1xaZCpnESRXu3fFVlS5w4ZAh2htUvjaDZBOuZCSxazBimJOTsqh2mII8RGY5IycnSsUUL6JVdZCXduZCBgCvK5NzTrpvZAaoEKgh7cEYvrHjZCtN4DRyBjZC62q9W1ZAHDGEMIozUzq6eUj8aJXz0II1hcIL4xeqTgTGLGNzqRV7GAWU1EPtv54HZB7e"
-
+        mensaje = "Estimado cliente, no hemos recibido respuesta, cerramos esta conversación y estamos atento para volver a atenderte. \n\n ℹ️ Sí ya tenías un pedido en este chat, favor volver a escribir, tomar opción como va mi pedido"
 
         body={
               "type": "button",
@@ -40,7 +40,7 @@ def send_menu_interactive_button(num_client,id_conversacion):
                 "text": "ℹ️"
               },
               "body": {
-                "text": "Estimado cliente, no hemos recibido respuesta, cerramos esta conversación y estamos atento para volver a atenderte"
+                "text": mensaje
               },
               "footer": {
                 "text": "Restaurante Wok Q'rrambero 🍜"
@@ -79,7 +79,7 @@ def send_menu_interactive_button(num_client,id_conversacion):
 
         
         response = requests.request("POST", url, headers=headers, data=payload)
-        db.insert_chatBot("Estimado cliente, no hemos recibido respuesta, cerramos esta conversación y estamos atento para volver a atenderte",id_conversacion,datetime.datetime.now(),None,"text","","whatsapp",None,"true")
+        db.insert_chatBot(mensaje,id_conversacion,datetime.datetime.now(),None,"text","","whatsapp",None,"true")
 
         print(response)
     except:
