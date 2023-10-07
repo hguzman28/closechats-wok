@@ -151,13 +151,14 @@ def lambda_handler(event, context):
                     db.save_name_itent(row['_id'],"CLIENTE_SIN_RESPUESTA")
                     print(row['origen'])
                     send_menu_interactive_button(row['origen'],row['_id'],TOKEN_WA,url)
-                elif row['RECALENTAMIENTO'] is True and row["INTERES"] is True:
-                    db.save_name_itent(row['_id'],"RECALENTAMIENTO_CLIENTE")
-                    send_menu_interactive(row['origen'],row['_id'],"Estimado cliente, favor usar algunas de las opciones suministrada👆",TOKEN_WA,url)
                 elif row['ESCALAR'] is True and row["INTERES"] is True:
                     db.save_name_itent(row['_id'],"CLIENTE_CON_INTERES_SIN_RESPUESTA")
                     send_menu_interactive(row['origen'],row['_id'],"Estimado cliente, a continuación uno de nuestros asesores lo atenderá",TOKEN_WA,url)
-                    db.escalar_conversaciones_inactivos(row['_id']) 
+                    db.escalar_conversaciones_inactivos(row['_id'])     
+                elif row['RECALENTAMIENTO'] is True and row["INTERES"] is True:
+                    db.save_name_itent(row['_id'],"RECALENTAMIENTO_CLIENTE")
+                    send_menu_interactive(row['origen'],row['_id'],"Estimado cliente, favor usar algunas de las opciones suministrada👆",TOKEN_WA,url)
+
                     
 
 
