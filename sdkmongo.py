@@ -76,7 +76,7 @@ class DB:
 
         query={"estadoBot":"ATENDIENDO"}
 
-        docs = col.find(query,{"_id":1,"lastMessageDateBot":1,"origen":1})
+        docs = col.find(query,{"_id":1,"lastMessageDateBot":1,"origen":1,"name_itent":1})
 
         if db.conversaciones.count_documents(query) != 0:
             #return docs
@@ -96,6 +96,18 @@ class DB:
         new_state = { "$set": { "estado":"ATENDIDO","estadoBot":"ATENDIDO","fechaTerminado":datetime.datetime.now(), "idx_estado.nombre":"ATENDIDO","idx_estado.clave":2} }
 
         col.update_many(query,new_state)
+
+    def escalar_conversaciones_inactivos(self,id):
+        print("escalar_conversaciones_inactivos")
+        print(id)
+        self.conect()
+        db = self.con
+        col = db['conversaciones']
+
+        query={"_id":ObjectId(id)}
+        new_state = { "$set": { "estado":"NO_ATENDIDO","estadoBot":"ESCALADO", "idx_estado.nombre":"NO_ATENDIDO","idx_estado.clave":0} }
+
+        col.update_many(query,new_state)    
 
     def insert_chatBot(self,mensaje,id,hora,id_msg,type_messege,channelId,platform,caption,estadoEnvio):
         print("insert_chat Bot"+str(type_messege)+":"+str(mensaje))
