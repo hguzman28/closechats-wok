@@ -106,8 +106,10 @@ class DB:
 
         query={"_id":ObjectId(id)}
         new_state = { "$set": { "estado":"NO_ATENDIDO","estadoBot":"ESCALADO", "idx_estado.nombre":"NO_ATENDIDO","idx_estado.clave":0} }
+        new_state2 = {"$unset": { "agente": "" }}
 
-        col.update_many(query,new_state)    
+        col.update_many(query,new_state)
+        col.update_many(query,new_state2)  
 
     def insert_chatBot(self,mensaje,id,hora,id_msg,type_messege,channelId,platform,caption,estadoEnvio):
         print("insert_chat Bot"+str(type_messege)+":"+str(mensaje))
