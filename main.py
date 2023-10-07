@@ -134,8 +134,8 @@ def lambda_handler(event, context):
 
             var_hoy = datetime.datetime.now()
             df['TIEMPO_INACTIVIDAD'] = var_hoy  - df['lastMessageDateBot']
-            df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=13), "CERRAR" ] = True
-            df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=3), "RECALENTAMIENTO" ] = True
+            df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=15), "CERRAR" ] = True
+            df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=2), "RECALENTAMIENTO" ] = True
             df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=5), "ESCALAR" ] = True
             df['INTERES'] = df['name_itent'].apply(lambda x: any("menu_ppal" in intent for intent in x))
 
