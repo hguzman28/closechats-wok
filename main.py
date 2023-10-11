@@ -115,23 +115,16 @@ def lambda_handler(event, context):
 
     try:
         db.check_conversaciones_inactivos()
+        chats_espera = db.check_conversaciones_espera()
+        supervisores = db.check_conversaciones_radar()
+        print(f'supervisores {supervisores}')
+        print(f'Chats en espera {chats_espera}')
+        
 
         if db.var_check_conversaciones_inactivos is not None:
 
-        #result = check_conversaciones_inactivos()
-
             df = pd.DataFrame(list(db.var_check_conversaciones_inactivos))
-            print(df.head(5))
-       
-            # name_itent = list(df["name_itent"].values)
-            # print(type(name_itent))
-            # print(name_itent[0])
-
-            # if any("menu_ppal" in intent for intent in name_itent[0]):
-            #     print("PILAS, HAY INTERES")
-
-
-
+            
             var_hoy = datetime.datetime.now()
             df['TIEMPO_INACTIVIDAD'] = var_hoy  - df['lastMessageDateBot']
             df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=15), "CERRAR" ] = True
@@ -139,9 +132,7 @@ def lambda_handler(event, context):
             df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=5), "ESCALAR" ] = True
             df['INTERES'] = df['name_itent'].apply(lambda x: any("menu_ppal" in intent for intent in x))
 
-            print(df)
-
-
+            
             for index, row in df.iterrows():
                 
 
@@ -158,10 +149,42 @@ def lambda_handler(event, context):
                 elif row['RECALENTAMIENTO'] is True and row["INTERES"] is True:
                     db.save_name_itent(row['_id'],"RECALENTAMIENTO_CLIENTE")
                     send_menu_interactive(row['origen'],row['_id'],"Estimado cliente, favor usar algunas de las opciones suministrada👆",TOKEN_WA,url)
+                
 
-                    
+        if chats_espera is not None:
+            try:
+              print("DENTRO CHATS EN ESPERA")
+            
+              df = pd.DataFrame(chats_espera)
+              print(df)
+              var_hoy = datetime.datetime.now()
+              df['TIEMPO_INACTIVIDAD'] = var_hoy  - df['lastMessageDateBot']
+              df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=3), "3m" ] = True
+              print("DF CHATS EN ESPERA")
+              print(df.head(5))
 
+              # Filtra las filas donde la columna '3m' es True
+              true_values = df[df['3m'] == True]
 
+              # Cuenta cuántos valores True hay
+              count_true = len(true_values)
+
+              # Crea una cadena con los nombres separados por coma
+              names = ', '.join(true_values['name_profile'])
+
+              print(f'Cantidad de True en 3m: {count_true}')
+              print(f'Nombres separados por coma: {names}')
+
+              for index, row in df.iterrows():
+                  
+                  if row['3m'] is True:
+                      print(index, row)
+                      db.save_name_itent(row['_id'],"CLIENTE_ENESPERA_3M")
+                      for super in supervisores:
+                        print(super["origen"])
+                        send_menu_interactive(super["origen"],row['_id'],f"📊 WappiRadar informa, que tiene(s) *{count_true}* cliente(s) con o más de 3 min de espera, \n\n sus nombre de perfile son:\n _{names}_",TOKEN_WA,url)
+            except:
+                print(sys.exc_info())                               
     except:
         return {"registro":"Fallido","conversacion":""+str(sys.exc_info())}
 

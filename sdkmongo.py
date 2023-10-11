@@ -25,6 +25,7 @@ class DB:
         self.var_check_lasts_audio_in = None
         self.var_check_file_unsend = None
         self.var_check_conversaciones_inactivos = None
+        self.var_check_chats_espera = None
 
 
     def conect(self):
@@ -83,6 +84,45 @@ class DB:
             self.var_check_conversaciones_inactivos= docs
         else:
             self.var_check_conversaciones_inactivos = None
+
+    def check_conversaciones_radar(self):
+        print("check_conversaciones_radar")
+        self.conect()
+        db = self.con
+        col = db['conversaciones']
+
+        query={"estadoBot":"RADAR"}
+
+        result = col.find(query,{"_id":1,"origen":1})
+
+        lista_result = list(result)
+        
+        # print(lista_result[0]["origen"])
+        
+        if db.conversaciones.count_documents(query) != 0:
+            return lista_result
+        else:
+            return None    
+
+
+
+    def check_conversaciones_espera(self):
+        print("check_conversaciones_espera")
+        self.conect()
+        db = self.con
+        col = db['conversaciones']
+
+        query={"estadoBot":"ESCALADO","estado":"NO_ATENDIDO"}
+
+        docs = col.find(query,{"_id":1,"origen":1,"name_profile":1,"lastMessageDateBot":1})
+        lista_docs = list(docs)
+
+        if db.conversaciones.count_documents(query) != 0:
+
+            return lista_docs
+           
+        else:
+            return None       
 
 
     def close_conversaciones_inactivos(self,id):
