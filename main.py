@@ -117,8 +117,7 @@ def lambda_handler(event, context):
         db.check_conversaciones_inactivos()
         chats_espera = db.check_conversaciones_espera()
         supervisores = db.check_conversaciones_radar()
-        print(f'supervisores {supervisores}')
-        print(f'Chats en espera {chats_espera}')
+
         
 
         if db.var_check_conversaciones_inactivos is not None:
@@ -156,7 +155,7 @@ def lambda_handler(event, context):
               print("DENTRO CHATS EN ESPERA")
             
               df = pd.DataFrame(chats_espera)
-              print(df)
+             
               var_hoy = datetime.datetime.now()
               df['TIEMPO_INACTIVIDAD'] = var_hoy  - df['lastMessageDateBot']
               df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=3), "3m" ] = True
@@ -171,9 +170,9 @@ def lambda_handler(event, context):
 
               # Crea una cadena con los nombres separados por coma
               names = ', '.join(true_values['name_profile'])
-
-              print(f'Cantidad de True en 3m: {count_true}')
-              print(f'Nombres separados por coma: {names}')
+              names_with_origen = ', '.join(true_values['name_profile'] + ' (' + true_values['origen'] + ')')
+              print(names_with_origen)
+             
 
               for index, row in df.iterrows():
                   
@@ -182,7 +181,7 @@ def lambda_handler(event, context):
                       db.save_name_itent(row['_id'],"CLIENTE_ENESPERA_3M")
                       for super in supervisores:
                         print(super["origen"])
-                        send_menu_interactive(super["origen"],row['_id'],f"📊 WappiRadar informa, que tiene(s) *{count_true}* cliente(s) con o más de 3 min de espera, \n\n sus nombre de perfile son:\n _{names}_",TOKEN_WA,url)
+                        send_menu_interactive("573243984410",row['_id'],f"📊 WappiRadar informa, que tiene(s) *{count_true}* cliente(s) con o más de 3 min de espera, \n\n sus nombre de perfile son:\n _{names_with_origen}_",TOKEN_WA,url)
             except:
                 print(sys.exc_info())                               
     except:
