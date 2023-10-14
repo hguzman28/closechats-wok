@@ -103,7 +103,7 @@ def send_menu_interactive(num_client,id_conversacion,mensaje,TOKEN_WA,url):
 
         
         response = requests.request("POST", url, headers=headers, data=payload)
-        db.insert_chatBot(mensaje,id_conversacion,datetime.datetime.now(),None,"text","","whatsapp",None,"true")
+        #db.insert_chatBot(mensaje,id_conversacion,datetime.datetime.now(),None,"text","","whatsapp",None,"true")
 
         print(response)
     except:
@@ -178,7 +178,7 @@ def lambda_handler(event, context):
                   
                   if row['3m'] is True:
                       print(index, row)
-                      db.save_name_itent(row['_id'],"CLIENTE_ENESPERA_3M")
+                      #db.save_name_itent(row['_id'],"CLIENTE_ENESPERA_3M")
                       for super in supervisores:
                         print(super["origen"])
                         send_menu_interactive(super["origen"],row['_id'],f"📊 WappiRadar informa, que tiene(s) *{count_true}* cliente(s) con o más de 3 min de espera, \n\n sus nombre de perfile son:\n _{names_with_origen}_",TOKEN_WA,url)
@@ -188,4 +188,4 @@ def lambda_handler(event, context):
         return {"registro":"Fallido","conversacion":""+str(sys.exc_info())}
 
 
-lambda_handler(None, None)
+#lambda_handler(None, None)
