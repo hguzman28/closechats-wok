@@ -103,6 +103,40 @@ def send_menu_interactive(num_client,id_conversacion,mensaje,TOKEN_WA,url):
 
         
         response = requests.request("POST", url, headers=headers, data=payload)
+        db.insert_chatBot(mensaje,id_conversacion,datetime.datetime.now(),None,"text","","whatsapp",None,"true")
+
+        print(response)
+    except:
+        print("except")
+        print(str(sys.exc_info())) 
+
+
+def send_menu_interactive_sin_registro(num_client,id_conversacion,mensaje,TOKEN_WA,url):
+    
+    try:
+        print("send_menu_interactive_sin_registro")
+        
+        payload = json.dumps({
+        "messaging_product": "whatsapp",
+        "to": ""+num_client+"",
+        "text": {
+            "body": ""+mensaje+""
+        }
+        })
+        
+
+        headers = {
+        'Authorization': 'Bearer '+str(TOKEN_WA)+'',
+        'Content-Type': 'application/json'
+        }
+
+        print("###########")
+        print(payload)
+        print("###########")
+        print(headers)
+
+        
+        response = requests.request("POST", url, headers=headers, data=payload)
         #db.insert_chatBot(mensaje,id_conversacion,datetime.datetime.now(),None,"text","","whatsapp",None,"true")
 
         print(response)
@@ -181,7 +215,7 @@ def lambda_handler(event, context):
                       #db.save_name_itent(row['_id'],"CLIENTE_ENESPERA_3M")
                       for super in supervisores:
                         print(super["origen"])
-                        send_menu_interactive(super["origen"],row['_id'],f"📊 WappiRadar informa, que tiene(s) *{count_true}* cliente(s) con o más de 3 min de espera, \n\n sus nombre de perfile son:\n _{names_with_origen}_",TOKEN_WA,url)
+                        send_menu_interactive_sin_registro(super["origen"],row['_id'],f"📊 WappiRadar informa, que tiene(s) *{count_true}* cliente(s) con o más de 3 min de espera, \n\n sus nombre de perfile son:\n _{names_with_origen}_",TOKEN_WA,url)
             except:
                 print(sys.exc_info())                               
     except:
