@@ -161,7 +161,7 @@ def lambda_handler(event, context):
         chats_espera = db.check_conversaciones_espera()
         supervisores = db.check_conversaciones_radar()
 
-        url,TOKEN_WA,token_wompi,token_catalogo,url_catalogo  = get_config(os.environ.get("NUM_API1"))
+        url,TOKEN_WA,token_wompi,token_catalogo,url_catalogo  = db.get_config(os.environ.get("NUM_API1"))
 
 
 
