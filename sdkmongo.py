@@ -52,6 +52,20 @@ class DB:
         except:
             print(sys.exc_info())
 
+    def get_config(self,api):
+        db = self.con
+        col = db['apis']
+
+        query = {"API":api}
+
+        result = col.find_one(query,{"url":1,"token":1,"token_wompi":1,"token_catalogo":1,"url_catalogo":1}) 
+        
+        if col.count_documents(query) != 0:
+            return result['url'],result['token'],result['token_wompi'],result['token_catalogo'],result['url_catalogo']
+ 
+        else:
+            return None 
+
     def save_name_itent(self,conversacion,name_itent):
 
         try:
