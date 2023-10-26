@@ -143,7 +143,9 @@ def send_menu_interactive_sin_registro(num_client,id_conversacion,mensaje,TOKEN_
     except:
         print("except")
         print(str(sys.exc_info())) 
+        
 
+    
 def lambda_handler(event, context):
 
 
@@ -152,7 +154,9 @@ def lambda_handler(event, context):
         chats_espera = db.check_conversaciones_espera()
         supervisores = db.check_conversaciones_radar()
 
-        
+        url,TOKEN_WA,token_wompi,token_catalogo,url_catalogo  = conversacion.get_config(os.environ.get("NUM_API1"))
+
+
 
         if db.var_check_conversaciones_inactivos is not None:
 
