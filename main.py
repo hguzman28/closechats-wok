@@ -15,8 +15,8 @@ import numpy
 
 db = sdkmongo.DB()
 
-url = "https://graph.facebook.com/v15.0/144272775427424/messages"
-TOKEN_WA = "EAAD4RcNvz3IBO4Q1xaZCpnESRXu3fFVlS5w4ZAh2htUvjaDZBOuZCSxazBimJOTsqh2mII8RGY5IycnSsUUL6JVdZCXduZCBgCvK5NzTrpvZAaoEKgh7cEYvrHjZCtN4DRyBjZC62q9W1ZAHDGEMIozUzq6eUj8aJXz0II1hcIL4xeqTgTGLGNzqRV7GAWU1EPtv54HZB7e"
+# url = "https://graph.facebook.com/v15.0/144272775427424/messages"
+# TOKEN_WA = "EAAD4RcNvz3IBO4Q1xaZCpnESRXu3fFVlS5w4ZAh2htUvjaDZBOuZCSxazBimJOTsqh2mII8RGY5IycnSsUUL6JVdZCXduZCBgCvK5NzTrpvZAaoEKgh7cEYvrHjZCtN4DRyBjZC62q9W1ZAHDGEMIozUzq6eUj8aJXz0II1hcIL4xeqTgTGLGNzqRV7GAWU1EPtv54HZB7e"
 
 def send_menu_interactive_button(num_client,id_conversacion,TOKEN_WA,url):
     
@@ -145,7 +145,14 @@ def send_menu_interactive_sin_registro(num_client,id_conversacion,mensaje,TOKEN_
         print(str(sys.exc_info())) 
         
 
-    
+def get_config(api):
+    db,client = conex(os.environ.get("db"))
+    url,token,token_wompi,token_catalogo,url_catalogo = db.get_config(api)
+    print("###### CONFIG ####")
+    print(url,token,token_wompi)
+
+    return url,token,token_wompi,token_catalogo,url_catalogo
+        
 def lambda_handler(event, context):
 
 
@@ -154,7 +161,7 @@ def lambda_handler(event, context):
         chats_espera = db.check_conversaciones_espera()
         supervisores = db.check_conversaciones_radar()
 
-        url,TOKEN_WA,token_wompi,token_catalogo,url_catalogo  = conversacion.get_config(os.environ.get("NUM_API1"))
+        url,TOKEN_WA,token_wompi,token_catalogo,url_catalogo  = get_config(os.environ.get("NUM_API1"))
 
 
 
