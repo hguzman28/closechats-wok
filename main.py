@@ -59,7 +59,7 @@ def send_menu_interactive_button(num_client,id_conversacion,TOKEN_WA,url):
         })
 
         headers = {
-        'Authorization': 'Bearer '+str(TOKEN_WA)+'',
+        'Authorization': ''+str(TOKEN_WA)+'',
         'Content-Type': 'application/json'
         }
 
@@ -92,7 +92,7 @@ def send_menu_interactive(num_client,id_conversacion,mensaje,TOKEN_WA,url):
         
 
         headers = {
-        'Authorization': 'Bearer '+str(TOKEN_WA)+'',
+        'Authorization': ''+str(TOKEN_WA)+'',
         'Content-Type': 'application/json'
         }
 
@@ -126,7 +126,7 @@ def send_menu_interactive_sin_registro(num_client,id_conversacion,mensaje,TOKEN_
         
 
         headers = {
-        'Authorization': 'Bearer '+str(TOKEN_WA)+'',
+        'Authorization': ''+str(TOKEN_WA)+'',
         'Content-Type': 'application/json'
         }
 
@@ -144,14 +144,6 @@ def send_menu_interactive_sin_registro(num_client,id_conversacion,mensaje,TOKEN_
         print("except")
         print(str(sys.exc_info())) 
         
-
-def get_config(api):
-    db,client = conex(os.environ.get("db"))
-    url,token,token_wompi,token_catalogo,url_catalogo = db.get_config(api)
-    print("###### CONFIG ####")
-    print(url,token,token_wompi)
-
-    return url,token,token_wompi,token_catalogo,url_catalogo
         
 def lambda_handler(event, context):
 
@@ -162,7 +154,9 @@ def lambda_handler(event, context):
         supervisores = db.check_conversaciones_radar()
 
         url,TOKEN_WA,token_wompi,token_catalogo,url_catalogo  = db.get_config(os.environ.get("NUM_API1"))
+        # url,TOKEN_WA,token_wompi,token_catalogo,url_catalogo  = db.get_config("573045847949")
 
+  
 
 
         if db.var_check_conversaciones_inactivos is not None:
@@ -175,6 +169,8 @@ def lambda_handler(event, context):
             df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=2), "RECALENTAMIENTO" ] = True
             df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=5), "ESCALAR" ] = True
             df['INTERES'] = df['name_itent'].apply(lambda x: any("menu_ppal" in intent for intent in x))
+
+            print(df.head(5))
 
             
             for index, row in df.iterrows():
@@ -233,4 +229,4 @@ def lambda_handler(event, context):
         return {"registro":"Fallido","conversacion":""+str(sys.exc_info())}
 
 
-#lambda_handler(None, None)
+lambda_handler(None, None)

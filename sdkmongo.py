@@ -31,8 +31,8 @@ class DB:
     def conect(self):
         #DB = "iContactdb"
         #URL_DB = ""
-        client = pymongo.MongoClient("mongodb://hguzman:Abcd.1234@cluster0-shard-00-00-ot7rd.mongodb.net:27017,cluster0-shard-00-01-ot7rd.mongodb.net:27017,cluster0-shard-00-02-ot7rd.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority")
-        db = client["WOK"]
+        client = pymongo.MongoClient(os.environ.get("string_mongo"))
+        db = client[os.environ.get("db")]
         self.con = db
 
     def get_trace_itents(self,conversacion):
