@@ -119,7 +119,6 @@ class DB:
             return None    
 
 
-
     def check_conversaciones_espera(self):
         print("check_conversaciones_espera")
         self.conect()
