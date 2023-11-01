@@ -175,7 +175,7 @@ class DB:
         try:
 
 
-            query={"rol":"Wappito","texto":mensaje,"conversacion":id,"estado":"NO_VISTO","fecha":fecha_dt,"canal":platform,"tipo":type_messege,"channelIdAPI":channelId,"estadoEnvio":estadoEnvio}
+            query={"rol":"bot","persona":"Wappito","texto":mensaje,"conversacion":id,"estado":"NO_VISTO","fecha":fecha_dt,"canal":platform,"tipo":type_messege,"channelIdAPI":channelId,"estadoEnvio":estadoEnvio}
             col.insert_one(query)
 
         except:
