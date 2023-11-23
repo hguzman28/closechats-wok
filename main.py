@@ -158,7 +158,7 @@ def lambda_handler(event, context):
 
   
 
-
+        ### Chats que el Bot está atendiendo ######
         if db.var_check_conversaciones_inactivos is not None:
 
             df = pd.DataFrame(list(db.var_check_conversaciones_inactivos))
@@ -169,9 +169,6 @@ def lambda_handler(event, context):
             df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=2), "RECALENTAMIENTO" ] = True
             df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=5), "ESCALAR" ] = True
             df['INTERES'] = df['name_itent'].apply(lambda x: any("menu_ppal" in intent for intent in x))
-
-            print(df.head(5))
-
             
             for index, row in df.iterrows():
                 
@@ -186,11 +183,11 @@ def lambda_handler(event, context):
                     db.save_name_itent(row['_id'],"CLIENTE_CON_INTERES_SIN_RESPUESTA")
                     send_menu_interactive(row['origen'],row['_id'],"Estimado cliente, a continuación uno de nuestros asesores lo atenderá",TOKEN_WA,url)
                     db.escalar_conversaciones_inactivos(row['_id'])     
-                elif row['RECALENTAMIENTO'] is True and row["INTERES"] is True:
+                elif row['RECALENTAMIENTO'] is True:
                     db.save_name_itent(row['_id'],"RECALENTAMIENTO_CLIENTE")
                     send_menu_interactive(row['origen'],row['_id'],"Estimado cliente, favor usar algunas de las opciones suministrada👆",TOKEN_WA,url)
                 
-
+        ### Chats que el Bot escaló y están de espera en atención ######
         if chats_espera is not None:
             try:
               print("DENTRO CHATS EN ESPERA")
