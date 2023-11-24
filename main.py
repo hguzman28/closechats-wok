@@ -240,14 +240,30 @@ def lambda_handler(event, context):
 
                 for index, row in df_ta3m.iterrows():
                   if row['ta3m'] is True:
-                      print(index, row)
+                      
+                      # Fechas de ultimo mensaje de cliente y agente
                       fecha_ultimo_mensaje_agente = db.get_fecha_ultimo_mensaje_agente(row['_id'])
-
+                      fecha_ultimo_mensaje_cliente = db.get_fecha_ultimo_mensaje_cliente(row['_id'])
+                      
+                      #### Definimos quien espera a quien ################
+                      quien_espera = 0 # Por defecto, Espera cliente a WOK   
                       if fecha_ultimo_mensaje_agente is not None:
-                          db.liberar_conversaciones_sin_gestion(row['_id'])
-                      elif var_hoy - fecha_ultimo_mensaje_agente >= datetime.timedelta(minutes=3): ## If tiempo sin gestion es mayor a 3 mins
-                          db.liberar_conversaciones_sin_gestion(row['_id'])
+                        if fecha_ultimo_mensaje_agente > fecha_ultimo_mensaje_cliente:
+                            quien_espera = 1 # Espera wok a cliente
+                        else:
+                            quien_espera = 0 # Espera cliente a WOK   
+                      
+                      ### Según quien espera, tomamos deciciones #########
+                      if  quien_espera == 0: # Espera cliente a WOK  
+                        if fecha_ultimo_mensaje_agente is None: ## Caso donde chat dieron click en atender, pero no ha sido gestionado por agente
+                            db.liberar_conversaciones_sin_gestion(row['_id'])
+                        elif var_hoy - fecha_ultimo_mensaje_agente >= datetime.timedelta(minutes=3): ## If tiempo sin gestion es mayor a 3 mins
+                            db.liberar_conversaciones_sin_gestion(row['_id'])
+                      else: # Espera wok a cliente
+                        if var_hoy - fecha_ultimo_mensaje_cliente >= datetime.timedelta(minutes=10): ## If tiempo sin gestion es mayor a 10 mins
+                            db.liberar_conversaciones_sin_gestion(row['_id'])
 
+                            
                       #db.save_name_itent(row['_id'],"CLIENTE_ENESPERA_3M")
                     #   for super in supervisores:
                     #     print(super["origen"])

@@ -172,7 +172,27 @@ class DB:
             return ultimo_mensaje[0]["createdAt"]
         else:
             return None  # No se encontraron mensajes del agente en esta conversación
+    
+    def get_fecha_ultimo_mensaje_cliente(self,conversacion):
+        print("get_fecha_ultimo_mensaje_cliente")
+        self.conect()
+        db = self.con
+      
+        # Buscar el último mensaje del agente en la conversación específica
+        query = {
+            "rol": "cliente",
+            "conversacion": ObjectId(conversacion)  # Pasar el ID de la conversación como cadena
+        }
+        projection = {"fecha": 1}  # Obtener solo el campo de fecha
+        mensajes_col = db['mensajes']
+        ultimo_mensaje = mensajes_col.find(query, projection).sort("fecha", -1).limit(1)
 
+        # Comprobar si se encontró algún mensaje
+        if mensajes_col.count_documents(query) > 0:
+            return ultimo_mensaje[0]["fecha"]
+        else:
+            return None  # No se encontraron mensajes del agente en esta conversación
+        
     def close_conversaciones_inactivos(self,id):
         print("close_conversaciones_inactivos")
         print(id)
@@ -207,7 +227,7 @@ class DB:
         col = db['conversaciones']
 
         query={"_id":ObjectId(id)}
-        new_state = { "$set": { "estado":"NO_ATENDIDO","estadoBot":"ESCALADO", "idx_estado.nombre":"NO_ATENDIDO","idx_estado.clave":0,"moveKey":"Sin Gestión +3m"} }
+        new_state = { "$set": { "estado":"NO_ATENDIDO","estadoBot":"ESCALADO", "idx_estado.nombre":"NO_ATENDIDO","idx_estado.clave":0,"moveKey":"Liberado,Sin Gestión +3m"} }
         new_state2 = {"$unset": { "agente": "" }}
 
         col.update_many(query,new_state)
