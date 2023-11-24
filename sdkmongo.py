@@ -135,8 +135,43 @@ class DB:
             return lista_docs
            
         else:
-            return None       
+            return None
 
+    def check_conversaciones_espera_en_curso(self):
+        print("check_conversaciones_espera_en_curso")
+        self.conect()
+        db = self.con
+        col = db['conversaciones']
+
+        query={"estadoBot":"ESCALADO","estado":"ATENDIENDO"}
+
+        docs = col.find(query,{"_id":1,"origen":1,"name_profile":1,"nuevosMensajes":1,"fechaAtendido":1})
+        lista_docs = list(docs)
+
+        if db.conversaciones.count_documents(query) != 0:
+            return lista_docs         
+        else:
+            return None              
+
+    def get_fecha_ultimo_mensaje_agente(self,conversacion):
+        print("get_ultimo_mensaje_agente")
+        self.conect()
+        db = self.con
+      
+        # Buscar el último mensaje del agente en la conversación específica
+        query = {
+            "rol": "agente",
+            "conversacion": ObjectId(conversacion)  # Pasar el ID de la conversación como cadena
+        }
+        projection = {"createdAt": 1}  # Obtener solo el campo de fecha
+        mensajes_col = db['mensajes']
+        ultimo_mensaje = mensajes_col.find(query, projection).sort("createdAt", -1).limit(1)
+
+        # Comprobar si se encontró algún mensaje
+        if mensajes_col.count_documents(query) > 0:
+            return ultimo_mensaje[0]["createdAt"]
+        else:
+            return None  # No se encontraron mensajes del agente en esta conversación
 
     def close_conversaciones_inactivos(self,id):
         print("close_conversaciones_inactivos")
@@ -162,7 +197,21 @@ class DB:
         new_state2 = {"$unset": { "agente": "" }}
 
         col.update_many(query,new_state)
-        col.update_many(query,new_state2)  
+        col.update_many(query,new_state2)
+
+    def liberar_conversaciones_sin_gestion(self,id):
+        print("liberar_conversaciones_sin_gestion")
+        print(id)
+        self.conect()
+        db = self.con
+        col = db['conversaciones']
+
+        query={"_id":ObjectId(id)}
+        new_state = { "$set": { "estado":"NO_ATENDIDO","estadoBot":"ESCALADO", "idx_estado.nombre":"NO_ATENDIDO","idx_estado.clave":0,"moveKey":"Sin Gestión +3m"} }
+        new_state2 = {"$unset": { "agente": "" }}
+
+        col.update_many(query,new_state)
+        col.update_many(query,new_state2)       
 
     def insert_chatBot(self,mensaje,id,hora,id_msg,type_messege,channelId,platform,caption,estadoEnvio):
         print("insert_chat Bot"+str(type_messege)+":"+str(mensaje))

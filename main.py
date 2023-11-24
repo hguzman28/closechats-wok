@@ -152,6 +152,7 @@ def lambda_handler(event, context):
         db.check_conversaciones_inactivos()
         chats_espera = db.check_conversaciones_espera()
         supervisores = db.check_conversaciones_radar()
+        chats_espera_en_curso = db.check_conversaciones_espera_en_curso()
 
         url,TOKEN_WA,token_wompi,token_catalogo,url_catalogo  = db.get_config(os.environ.get("NUM_API1"))
         # url,TOKEN_WA,token_wompi,token_catalogo,url_catalogo  = db.get_config("573045847949")
@@ -173,17 +174,17 @@ def lambda_handler(event, context):
             for index, row in df.iterrows():
                 
 
-                if row['CERRAR'] is True and row["INTERES"] is False:
+                if row['CERRAR'] is True and row["INTERES"] is False:  ## 15 mins de espera sin inicio cotización
                     print(index, row)
                     db.close_conversaciones_inactivos(row['_id'])
                     db.save_name_itent(row['_id'],"CLIENTE_SIN_RESPUESTA")
                     print(row['origen'])
                     send_menu_interactive_button(row['origen'],row['_id'],TOKEN_WA,url)
-                elif row['ESCALAR'] is True and row["INTERES"] is True:
+                elif row['ESCALAR'] is True and row["INTERES"] is True: ## 5 mins de espera con por lo menos ya inicio ver los productos, cotización o en datos personales
                     db.save_name_itent(row['_id'],"CLIENTE_CON_INTERES_SIN_RESPUESTA")
                     send_menu_interactive(row['origen'],row['_id'],"Estimado cliente, a continuación uno de nuestros asesores lo atenderá",TOKEN_WA,url)
                     db.escalar_conversaciones_inactivos(row['_id'])     
-                elif row['RECALENTAMIENTO'] is True:
+                elif row['RECALENTAMIENTO'] is True: ### Recordar al cliente que estamos atentos despues de 2 mins de espera
                     db.save_name_itent(row['_id'],"RECALENTAMIENTO_CLIENTE")
                     send_menu_interactive(row['origen'],row['_id'],"Estimado cliente, favor usar algunas de las opciones suministrada👆",TOKEN_WA,url)
                 
@@ -191,14 +192,12 @@ def lambda_handler(event, context):
         if chats_espera is not None:
             try:
               print("DENTRO CHATS EN ESPERA")
-            
               df = pd.DataFrame(chats_espera)
              
+              # identificar registros con más chats igual o mayor a 3m
               var_hoy = datetime.datetime.now()
               df['TIEMPO_INACTIVIDAD'] = var_hoy  - df['lastMessageDateBot']
               df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=3), "3m" ] = True
-              print("DF CHATS EN ESPERA")
-              print(df.head(5))
 
               # Filtra las filas donde la columna '3m' es True
               true_values = df[df['3m'] == True]
@@ -223,7 +222,40 @@ def lambda_handler(event, context):
               for index,row in true_values.iterrows():
                   send_menu_interactive(row['origen'],row['_id'],"Gracias por la espera. Un asesor lo atenderá en breve",TOKEN_WA,url)
             except:
-                print(sys.exc_info())                               
+                print(sys.exc_info())   
+
+        ### Chats q están en atención por un agente ######         
+        if chats_espera_en_curso is not None:
+            try:
+                print("DENTRO CHATS EN chats_espera_en_curso")
+                df = pd.DataFrame(chats_espera_en_curso)
+                
+                # identificar registros con chats igual o mayor a 3m
+                var_hoy = datetime.datetime.now()
+                df['TIEMPO_ATENCION'] = var_hoy  - df['fechaAtendido']
+                df.loc[df['TIEMPO_ATENCION'] >  datetime.timedelta(minutes=3), "ta3m" ] = True
+
+                # Filtra las filas donde la columna 'ta3m' es True
+                df_ta3m = df[df['ta3m'] == True]
+
+                for index, row in df_ta3m.iterrows():
+                  if row['ta3m'] is True:
+                      print(index, row)
+                      fecha_ultimo_mensaje_agente = db.get_fecha_ultimo_mensaje_agente(row['_id'])
+
+                      if fecha_ultimo_mensaje_agente is not None:
+                          db.liberar_conversaciones_sin_gestion(row['_id'])
+                      elif var_hoy - fecha_ultimo_mensaje_agente >= datetime.timedelta(minutes=3): ## If tiempo sin gestion es mayor a 3 mins
+                          db.liberar_conversaciones_sin_gestion(row['_id'])
+
+                      #db.save_name_itent(row['_id'],"CLIENTE_ENESPERA_3M")
+                    #   for super in supervisores:
+                    #     print(super["origen"])
+                    #     send_menu_interactive_sin_registro(super["origen"],row['_id'],f"📊 WappiRadar informa, que tiene(s) *{count_true}* cliente(s) con o más de 3 min de espera, \n\n sus nombre de perfile son:\n _{names_with_origen}_",TOKEN_WA,url)
+
+            except:
+               print(sys.exc_info())     
+
     except:
         return {"registro":"Fallido","conversacion":""+str(sys.exc_info())}
 
