@@ -219,8 +219,8 @@ def lambda_handler(event, context):
                         print(super["origen"])
                         send_menu_interactive_sin_registro(super["origen"],row['_id'],f"📊 WappiRadar informa, que tiene(s) *{count_true}* cliente(s) con o más de 3 min de espera, \n\n sus nombre de perfile son:\n _{names_with_origen}_",TOKEN_WA,url)
               
-              for index,row in true_values.iterrows():
-                  send_menu_interactive(row['origen'],row['_id'],"Gracias por la espera. Un asesor lo atenderá en breve",TOKEN_WA,url)
+              #for index,row in true_values.iterrows():
+              #    send_menu_interactive(row['origen'],row['_id'],"Gracias por la espera. Un asesor lo atenderá en breve",TOKEN_WA,url)
             except:
                 print(sys.exc_info())   
 
