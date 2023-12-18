@@ -1,5 +1,9 @@
 FROM public.ecr.aws/lambda/python:3.9
 
+# Instalación de utilidades básicas
+RUN yum install -y which && \
+    yum install -y util-linux
+
 # Instalación de New Relic CLI
 RUN curl -Ls https://download.newrelic.com/install/newrelic-cli/scripts/install.sh | bash \
     && export PATH=$PATH:/usr/local/bin
