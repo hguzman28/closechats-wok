@@ -148,7 +148,7 @@ def send_menu_interactive_sin_registro(num_client,id_conversacion,mensaje,TOKEN_
 def lambda_handler(event, context):
 
 
-    try:
+    # try:
         db.check_conversaciones_inactivos()
         chats_espera = db.check_conversaciones_espera()
         supervisores = db.check_conversaciones_radar()
@@ -272,8 +272,8 @@ def lambda_handler(event, context):
             except:
                print(sys.exc_info())     
 
-    except:
-        return {"registro":"Fallido","conversacion":""+str(sys.exc_info())}
+    # except:
+    #     return {"registro":"Fallido","conversacion":""+str(sys.exc_info())}
 
 
 lambda_handler(None, None)
