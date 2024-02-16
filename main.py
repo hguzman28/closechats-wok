@@ -169,6 +169,8 @@ def lambda_handler(event, context):
             df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=15), "CERRAR" ] = True
             df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=2), "RECALENTAMIENTO" ] = True
             df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=5), "ESCALAR" ] = True
+            # Verificar y reemplazar NaN con una lista vacía en la columna 'name_itent'
+            df['name_itent'] = df['name_itent'].apply(lambda x: [] if pd.isnull(x) else x)
             df['INTERES'] = df['name_itent'].apply(lambda x: any("menu_ppal" in intent for intent in x))
             
             for index, row in df.iterrows():
