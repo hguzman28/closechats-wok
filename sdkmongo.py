@@ -244,7 +244,7 @@ class DB:
             col = db['conversaciones']
 
             lista_itents= self.get_trace_agentes(conversacion)
-            name_itent = f'{len(lista_itents)}.{name_itent}'
+            # name_itent = f'{len(lista_itents)}.{name_itent}'
             lista_itents.append(name_itent)
 
             query = {"_id":ObjectId(conversacion)}
@@ -270,7 +270,7 @@ class DB:
         col.update_many(query,new_state)
         col.update_many(query,new_state2)
         self.save_name_agentes(id,agente)
-           
+
 
     def insert_chatBot(self,mensaje,id,hora,id_msg,type_messege,channelId,platform,caption,estadoEnvio):
         print("insert_chat Bot"+str(type_messege)+":"+str(mensaje))
