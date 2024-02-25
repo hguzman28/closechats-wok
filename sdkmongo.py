@@ -262,7 +262,7 @@ class DB:
 
             lista_itents= self.get_trace_agentes(conversacion)
             # name_itent = f'{len(lista_itents)}.{name_itent}'
-            lista_itents.append(ObjectId(name_itent))
+            lista_itents.append(name_itent)
 
             query = {"_id":ObjectId(conversacion)}
             new_state = { "$set": {"iteracion_agentes":lista_itents} }   
