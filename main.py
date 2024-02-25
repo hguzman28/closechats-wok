@@ -203,18 +203,22 @@ def lambda_handler(event, context):
              
               # identificar registros con más chats igual o mayor a 3m
               var_hoy = datetime.datetime.now()
+
+              ##### Mayor a 3 min ######
               df['TIEMPO_INACTIVIDAD'] = var_hoy  - df['lastMessageDateBot']
               df.loc[df['TIEMPO_INACTIVIDAD'] >  datetime.timedelta(minutes=3), "3m" ] = True
 
               # Filtra las filas donde la columna '3m' es True
               true_values = df[df['3m'] == True]
 
+              print(true_values)
+
               # Cuenta cuántos valores True hay
               count_true = len(true_values)
 
               # Crea una cadena con los nombres separados por coma
-              names = ', '.join(true_values['name_profile'])
-              names_with_origen = ', '.join(true_values['name_profile'] + ' (' + true_values['origen'] + ')')
+            #   names = ', '.join(true_values['name_profile'])
+              names_with_origen = ', '.join(true_values['name_profile'] + ' (' + true_values['origen'] + ')'+'-Tiempo espera: '+true_values['TIEMPO_INACTIVIDAD'])
               print(names_with_origen)
 
               for index, row in df.iterrows():
@@ -254,7 +258,8 @@ def lambda_handler(event, context):
                       
                       #### Definimos quien espera a quien ################
                       quien_espera = 0 # Por defecto, Espera cliente a WOK   
-                      if fecha_ultimo_mensaje_agente is not None:
+                      #if fecha_ultimo_mensaje_agente is not None:
+                      if fecha_ultimo_mensaje_agente is not None and fecha_ultimo_mensaje_cliente is not None:  
                         if fecha_ultimo_mensaje_agente > fecha_ultimo_mensaje_cliente:
                             quien_espera = 1 # Espera wok a cliente
                         else:

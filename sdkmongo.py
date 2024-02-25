@@ -125,7 +125,7 @@ class DB:
         db = self.con
         col = db['conversaciones']
 
-        query={"estadoBot":"ESCALADO","estado":"NO_ATENDIDO"}
+        query={"estadoBot":{"$in": ["ESCALADO","JALADO_X_AGENTE"]},"estado":"NO_ATENDIDO"}
 
         docs = col.find(query,{"_id":1,"origen":1,"name_profile":1,"lastMessageDateBot":1})
         lista_docs = list(docs)
@@ -143,7 +143,7 @@ class DB:
         db = self.con
         col = db['conversaciones']
 
-        query={"estadoBot":"ESCALADO","estado":"ATENDIENDO"}
+        query={"estadoBot":{"$in": ["ESCALADO","JALADO_X_AGENTE"]},"estado":"ATENDIENDO"}
 
         docs = col.find(query,{"_id":1,"origen":1,"name_profile":1,"nuevosMensajes":1,"fechaAtendido":1})
         lista_docs = list(docs)
