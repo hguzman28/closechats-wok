@@ -230,8 +230,9 @@ def lambda_handler(event, context):
             #   names_with_origen = ', '.join(true_values['name_profile'] + ' (' + true_values['origen'] + ')'+'-Tiempo espera: '+true_values['TIEMPO_INACTIVIDAD'])
               print(names_with_origen)
 
-
-              # Agrega la primera línea del mensaje con la cantidad de clientes
+          
+              # Agrega la primera línea del mensaje con la cantidad de clientes}
+              mensaje_lines = []
               mensaje_lines.append(f"📊 WappiRadar informa, que tiene(s) {num_clientes} cliente(s) con o más de 3 min de espera:")
 
               # Recorre los clientes y agrega una línea para cada uno
