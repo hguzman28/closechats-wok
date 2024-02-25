@@ -233,7 +233,7 @@ def lambda_handler(event, context):
           
               # Agrega la primera línea del mensaje con la cantidad de clientes}
               mensaje_lines = []
-              mensaje_lines.append(f"📊 WappiRadar informa, que tiene(s) {num_clientes} cliente(s) con o más de 3 min de espera:")
+              mensaje_lines.append(f"📊 WappiRadar informa, que tiene(s) {count_true} cliente(s) con o más de 3 min de espera:")
 
               # Recorre los clientes y agrega una línea para cada uno
               for index, row in true_values.iterrows():
