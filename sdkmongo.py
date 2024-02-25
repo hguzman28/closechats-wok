@@ -145,7 +145,7 @@ class DB:
 
         query={"estadoBot":{"$in": ["ESCALADO","JALADO_X_AGENTE"]},"estado":"ATENDIENDO"}
 
-        docs = col.find(query,{"_id":1,"origen":1,"name_profile":1,"nuevosMensajes":1,"fechaAtendido":1})
+        docs = col.find(query,{"_id":1,"origen":1,"name_profile":1,"nuevosMensajes":1,"fechaAtendido":1,"agente":1})
         lista_docs = list(docs)
 
         if db.conversaciones.count_documents(query) != 0:
@@ -219,19 +219,58 @@ class DB:
         col.update_many(query,new_state)
         col.update_many(query,new_state2)
 
-    def liberar_conversaciones_sin_gestion(self,id):
+    def get_trace_agentes(self,conversacion):
+        try:
+            print("### agentes ###")
+            db = self.con
+            col = db['conversaciones']
+
+            query = {"_id":ObjectId(conversacion)}
+      
+            result = col.find_one(query,{"iteracion_agentes":1})
+
+            var_name_itent = result.get('iteracion_agentes', ["0"])
+
+            return var_name_itent
+       
+        except:
+            print(sys.exc_info())
+
+    def save_name_agentes(self,conversacion,name_itent):
+
+        try:
+            print("save_name_agentes")
+            db = self.con
+            col = db['conversaciones']
+
+            lista_itents= self.get_trace_agentes(conversacion)
+            name_itent = f'{len(lista_itents)}.{name_itent}'
+            lista_itents.append(name_itent)
+
+            query = {"_id":ObjectId(conversacion)}
+            new_state = { "$set": {"iteracion_agentes":lista_itents} }   
+            col.update_many(query,new_state)
+       
+        except:
+            print(sys.exc_info())
+
+    def liberar_conversaciones_sin_gestion(self,id,agente):
         print("liberar_conversaciones_sin_gestion")
         print(id)
         self.conect()
         db = self.con
         col = db['conversaciones']
 
+        
+
         query={"_id":ObjectId(id)}
         new_state = { "$set": { "estado":"NO_ATENDIDO","estadoBot":"ESCALADO", "idx_estado.nombre":"NO_ATENDIDO","idx_estado.clave":0,"moveKey":"Liberado,Sin Gestión +3m"} }
         new_state2 = {"$unset": { "agente": "" }}
 
         col.update_many(query,new_state)
-        col.update_many(query,new_state2)       
+        col.update_many(query,new_state2)
+        self.save_name_agentes(id,agente)
+           
 
     def insert_chatBot(self,mensaje,id,hora,id_msg,type_messege,channelId,platform,caption,estadoEnvio):
         print("insert_chat Bot"+str(type_messege)+":"+str(mensaje))

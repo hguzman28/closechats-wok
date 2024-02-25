@@ -293,12 +293,12 @@ def lambda_handler(event, context):
                       ### Según quien espera, tomamos deciciones #########
                       if  quien_espera == 0: # Espera cliente a WOK  
                         if fecha_ultimo_mensaje_agente is None: ## Caso donde chat dieron click en atender, pero no ha sido gestionado por agente
-                            db.liberar_conversaciones_sin_gestion(row['_id'])
+                            db.liberar_conversaciones_sin_gestion(row['_id'],row['agente'])
                         elif var_hoy - fecha_ultimo_mensaje_agente >= datetime.timedelta(minutes=3): ## If tiempo sin gestion es mayor a 3 mins
-                            db.liberar_conversaciones_sin_gestion(row['_id'])
+                            db.liberar_conversaciones_sin_gestion(row['_id'],row['agente'])
                       else: # Espera wok a cliente
                         if var_hoy - fecha_ultimo_mensaje_cliente >= datetime.timedelta(minutes=10): ## If tiempo sin gestion es mayor a 10 mins
-                            db.liberar_conversaciones_sin_gestion(row['_id'])
+                            db.liberar_conversaciones_sin_gestion(row['_id'],row['agente'])
 
                             
                       #db.save_name_itent(row['_id'],"CLIENTE_ENESPERA_3M")
