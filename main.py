@@ -238,7 +238,7 @@ def lambda_handler(event, context):
               # Recorre los clientes y agrega una línea para cada uno
               for index, row in true_values.iterrows():
                   nombre_perfil = row['name_profile']
-                  numero_telefono = row['telefono']
+                  numero_telefono = row['origen'] 
                   tiempo_espera_minutos = row['TIEMPO_INACTIVIDAD'].total_seconds() / 60
                   mensaje_lines.append(f"{nombre_perfil} ({numero_telefono}) - Tiempo espera: {tiempo_espera_minutos:.2f} minutos")
 
