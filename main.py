@@ -210,15 +210,24 @@ def lambda_handler(event, context):
 
               # Filtra las filas donde la columna '3m' es True
               true_values = df[df['3m'] == True]
-
               print(true_values)
-
               # Cuenta cuántos valores True hay
               count_true = len(true_values)
 
+              # Suponiendo que true_values['TIEMPO_INACTIVIDAD'] contiene objetos Timedelta
+              # Primero, convertimos los timedelta a minutos
+              tiempos_en_minutos = true_values['TIEMPO_INACTIVIDAD'] / pd.Timedelta(minutes=1)
+
+              # Luego, los convertimos a cadenas de texto
+              tiempos_en_minutos_str = tiempos_en_minutos.astype(str) + ' minutos'
+
+              # Finalmente, unimos todas las partes
+              names_with_origen = ', '.join(true_values['name_profile'] + ' (' + true_values['origen'] + ')' + ' - Tiempo espera: ' + tiempos_en_minutos_str)
+
+
               # Crea una cadena con los nombres separados por coma
             #   names = ', '.join(true_values['name_profile'])
-              names_with_origen = ', '.join(true_values['name_profile'] + ' (' + true_values['origen'] + ')'+'-Tiempo espera: '+true_values['TIEMPO_INACTIVIDAD'])
+            #   names_with_origen = ', '.join(true_values['name_profile'] + ' (' + true_values['origen'] + ')'+'-Tiempo espera: '+true_values['TIEMPO_INACTIVIDAD'])
               print(names_with_origen)
 
               for index, row in df.iterrows():
