@@ -230,6 +230,20 @@ def lambda_handler(event, context):
             #   names_with_origen = ', '.join(true_values['name_profile'] + ' (' + true_values['origen'] + ')'+'-Tiempo espera: '+true_values['TIEMPO_INACTIVIDAD'])
               print(names_with_origen)
 
+
+              # Agrega la primera línea del mensaje con la cantidad de clientes
+              mensaje_lines.append(f"📊 WappiRadar informa, que tiene(s) {num_clientes} cliente(s) con o más de 3 min de espera:")
+
+              # Recorre los clientes y agrega una línea para cada uno
+              for index, row in true_values.iterrows():
+                  nombre_perfil = row['name_profile']
+                  numero_telefono = row['telefono']
+                  tiempo_espera_minutos = row['TIEMPO_INACTIVIDAD'].total_seconds() / 60
+                  mensaje_lines.append(f"{nombre_perfil} ({numero_telefono}) - Tiempo espera: {tiempo_espera_minutos:.2f} minutos")
+
+              # Une todas las líneas del mensaje en una sola cadena
+              mensaje = "\n".join(mensaje_lines)
+
               for index, row in df.iterrows():
                   
                   if row['3m'] is True:
@@ -237,8 +251,9 @@ def lambda_handler(event, context):
                       #db.save_name_itent(row['_id'],"CLIENTE_ENESPERA_3M")
                       for super in supervisores:
                         print(super["origen"])
-                        send_menu_interactive_sin_registro(super["origen"],row['_id'],f"📊 WappiRadar informa, que tiene(s) *{count_true}* cliente(s) con o más de 3 min de espera, \n\n sus nombre de perfile son:\n _{names_with_origen}_",TOKEN_WA,url)
-              
+                        # send_menu_interactive_sin_registro(super["origen"],row['_id'],f"📊 WappiRadar informa, que tiene(s) *{count_true}* cliente(s) con o más de 3 min de espera, \n\n sus nombre de perfile son:\n _{names_with_origen}_",TOKEN_WA,url)
+                        send_menu_interactive_sin_registro(super["origen"],row['_id'],mensaje,TOKEN_WA,url)
+
               #for index,row in true_values.iterrows():
               #    send_menu_interactive(row['origen'],row['_id'],"Gracias por la espera. Un asesor lo atenderá en breve",TOKEN_WA,url)
             except:
