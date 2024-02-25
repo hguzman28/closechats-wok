@@ -236,6 +236,23 @@ class DB:
         except:
             print(sys.exc_info())
 
+    def get_name_agent(self,id):
+        try:
+            print("### get_name_agent ###")
+            db = self.con
+            col = db['agentes']
+
+            query = {"_id":ObjectId(id)}
+      
+            result = col.find_one(query,{"nombre":1})
+
+            var_name_itent = result.get('nombre', ["0"])
+
+            return var_name_itent
+       
+        except:
+            print(sys.exc_info())
+
     def save_name_agentes(self,conversacion,name_itent):
 
         try:
@@ -269,7 +286,9 @@ class DB:
 
         col.update_many(query,new_state)
         col.update_many(query,new_state2)
-        self.save_name_agentes(id,agente)
+
+        name_agente = self.get_name_agent(agente)
+        self.save_name_agentes(id,name_agente)
 
 
     def insert_chatBot(self,mensaje,id,hora,id_msg,type_messege,channelId,platform,caption,estadoEnvio):
