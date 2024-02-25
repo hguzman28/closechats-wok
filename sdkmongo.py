@@ -262,7 +262,7 @@ class DB:
 
             lista_itents= self.get_trace_agentes(conversacion)
             # name_itent = f'{len(lista_itents)}.{name_itent}'
-            lista_itents.append(name_itent)
+            lista_itents.append(ObjectId(name_itent))
 
             query = {"_id":ObjectId(conversacion)}
             new_state = { "$set": {"iteracion_agentes":lista_itents} }   
@@ -288,7 +288,7 @@ class DB:
         col.update_many(query,new_state2)
 
         name_agente = self.get_name_agent(agente)
-        self.save_name_agentes(id,name_agente)
+        self.save_name_agentes(id,agente)
 
 
     def insert_chatBot(self,mensaje,id,hora,id_msg,type_messege,channelId,platform,caption,estadoEnvio):
