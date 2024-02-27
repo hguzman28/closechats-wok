@@ -17,6 +17,62 @@ db = sdkmongo.DB()
 
 # url = "https://graph.facebook.com/v15.0/144272775427424/messages"
 # TOKEN_WA = "EAAD4RcNvz3IBO4Q1xaZCpnESRXu3fFVlS5w4ZAh2htUvjaDZBOuZCSxazBimJOTsqh2mII8RGY5IycnSsUUL6JVdZCXduZCBgCvK5NzTrpvZAaoEKgh7cEYvrHjZCtN4DRyBjZC62q9W1ZAHDGEMIozUzq6eUj8aJXz0II1hcIL4xeqTgTGLGNzqRV7GAWU1EPtv54HZB7e"
+def send_menu_interactive_button_dinamico(num_client,mensaje,id_conversacion,TOKEN_WA,url):
+    
+    try:
+      
+        body={
+              "type": "button",
+              "header": {
+                "type": "text",
+                "text": "ℹ️"
+              },
+              "body": {
+                "text": mensaje
+              },
+              "footer": {
+                "text": "Restaurante Wok Q'rrambero 🍜"
+              },
+              "action": {
+                    "buttons": [
+                    {
+                      "type": "reply",
+                      "reply": {
+                        "id": "returnClien",
+                        "title": "Descubrir" 
+                      }
+                    }
+                 ] 
+              }
+            }
+        
+        payload = json.dumps({
+        "messaging_product": "whatsapp",
+        "recipient_type": "individual",
+        "to": ""+str(num_client)+"",
+        "type": "interactive",
+        "interactive": body
+
+        })
+
+        headers = {
+        'Authorization': ''+str(TOKEN_WA)+'',
+        'Content-Type': 'application/json'
+        }
+
+        print("###########")
+        print(payload)
+        print("###########")
+        print(headers)
+
+        
+        response = requests.request("POST", url, headers=headers, data=payload)
+        db.insert_chatBot(mensaje,id_conversacion,datetime.datetime.now(),None,"text","","whatsapp",None,"true")
+
+        print(response)
+    except:
+        print("except")
+        print(str(sys.exc_info())) 
 
 def send_menu_interactive_button(num_client,id_conversacion,TOKEN_WA,url):
     
@@ -144,7 +200,7 @@ def send_menu_interactive_sin_registro(num_client,id_conversacion,mensaje,TOKEN_
         print("except")
         print(str(sys.exc_info())) 
         
-        
+       
 def lambda_handler(event, context):
 
 
@@ -153,9 +209,10 @@ def lambda_handler(event, context):
         chats_espera = db.check_conversaciones_espera()
         supervisores = db.check_conversaciones_radar()
         chats_espera_en_curso = db.check_conversaciones_espera_en_curso()
+        chats_fuera_dehorario_8h = db.get_conversaciones_fuera_de_horario_ultimas8h()
 
-        url,TOKEN_WA,token_wompi,token_catalogo,url_catalogo  = db.get_config(os.environ.get("NUM_API1"))
-        # url,TOKEN_WA,token_wompi,token_catalogo,url_catalogo  = db.get_config("573045847949")
+        # url,TOKEN_WA,token_wompi,token_catalogo,url_catalogo  = db.get_config(os.environ.get("NUM_API1"))
+        url,TOKEN_WA,token_wompi,token_catalogo,url_catalogo  = db.get_config("573045847949")
 
   
 
@@ -308,6 +365,20 @@ def lambda_handler(event, context):
 
             except:
                print(sys.exc_info())     
+
+        if chats_fuera_dehorario_8h is not None:
+            try:
+                print("DENTRO chats_fuera_dehorario_8h")
+                df = pd.DataFrame(chats_fuera_dehorario_8h)
+
+                for index, row in df.iterrows():
+                    send_menu_interactive_button_dinamico(row['origen'],"Estimado cliente, nos encontramo en horario hábil, haz tú pedido",row['_id'],TOKEN_WA,url)
+                    db.cliente_notificacido_disponibilidad_horario(row['_id'])
+
+
+
+            except:
+               print(sys.exc_info()) 
 
     # except:
     #     return {"registro":"Fallido","conversacion":""+str(sys.exc_info())}

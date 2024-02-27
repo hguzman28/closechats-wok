@@ -1,9 +1,12 @@
 import pymongo
 import re
 import datetime
+from datetime import datetime, tzinfo, timezone,timedelta
 import sys
 from bson import ObjectId
 import os
+import boto3
+import json
 
 class DB:
 
@@ -35,6 +38,18 @@ class DB:
         db = client[os.environ.get("db")]
         self.con = db
 
+    def call_lambda_horario(self):
+        # Define the client to interact with AWS Lambda
+        client = boto3.client('lambda')
+
+        response = client.invoke(
+                FunctionName = 'arn:aws:lambda:us-east-1:098279560285:function:check_horario_habil',
+                InvocationType = 'RequestResponse',
+                Payload = json.dumps({"db":""+os.environ.get('db')+""})
+            )
+
+        return json.load(response['Payload'])
+ 
     def get_trace_itents(self,conversacion):
         try:
             print("### get_trace_itents ###")
@@ -151,8 +166,63 @@ class DB:
         if db.conversaciones.count_documents(query) != 0:
             return lista_docs         
         else:
-            return None              
+            return None 
 
+    def get_conversaciones_fuera_de_horario_ultimas8h(self):
+        print("get_conversaciones_fuera_de_horario_ultimas8h")
+        self.conect()
+        db = self.con
+        col = db['conversaciones']
+
+        result_horario = self.call_lambda_horario()
+        print(result_horario)
+
+        if result_horario['estado'] == 'Horario_habil':
+            today = datetime.now()
+            fecha_limite = today - timedelta(hours=8)
+    
+            query={
+                    'origen': '573243984410',
+                    '$or': [
+                        {
+                            'estado': 'ATENDIDO'
+                        }, {
+                            'estadoBot': 'ATENDIDO'
+                        }
+                    ], 
+                    'name_itent': {
+                        '$regex': 'FUERA_DE_HORARIO'
+                    }, 
+                    'fecha': {
+                        '$gte': fecha_limite
+                    },
+                        'notificacion_disponibilidad': {
+                                '$exists': False
+                            }
+                }
+
+            docs = col.find(query,{"_id":1,"origen":1,"name_profile":1})
+            lista_docs = list(docs)
+
+            if db.conversaciones.count_documents(query) != 0:
+                return lista_docs         
+            else:
+                return None                        
+        else:
+            return None
+    
+    def cliente_notificacido_disponibilidad_horario(self,id):
+        print("cliente_notificacido_disponibilidad_horario")
+        self.conect()
+        db = self.con
+        col = db['conversaciones']
+
+        query={"_id": ObjectId(id) }
+        new_state = { "$set": { "notificacion_disponibilidad":"SI" } }
+
+        col.update_many(query,new_state)
+
+        
     def get_fecha_ultimo_mensaje_agente(self,conversacion):
         print("get_ultimo_mensaje_agente")
         self.conect()
