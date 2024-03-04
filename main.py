@@ -8,7 +8,7 @@ import sys
 from bson import ObjectId
 import sdkmongo
 import os
-import pandas as pd
+import modin.pandas as pd
 import requests
 import numpy
 

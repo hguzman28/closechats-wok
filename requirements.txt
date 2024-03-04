@@ -10,3 +10,4 @@ python-multipart
 pymongo
 pandas
 numpy
+modin[all]
