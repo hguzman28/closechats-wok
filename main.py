@@ -19,6 +19,7 @@ db = sdkmongo.DB()
 def send_menu_interactive_button_dinamico(num_client,mensaje,id_conversacion,TOKEN_WA,url):
     
     try:
+        print("send_menu_interactive_button_dinamico")
       
         body={
               "type": "button",
@@ -373,8 +374,8 @@ def lambda_handler(event, context):
                 for index, row in df.iterrows():
                     
                     db.save_name_itent(row['_id'],"NOTIFICACION_APERTURA") 
-                    send_menu_interactive_button_dinamico(row['origen'],row['_id'],"Estimado cliente, hemos abierto para darte el mejor servicio",TOKEN_WA,url)
-                    db.cliente_notificacido_disponibilidad_horario(row['_id'])  
+                    send_menu_interactive_button_dinamico(row['origen'],"Estimado cliente, hemos dado apertura para brindarte lo mejor de nuestro menú",row['_id'],TOKEN_WA,url)
+                    db.cliente_notificacido_disponibilidad_horario(row['_id'])
             
             except:
                print(sys.exc_info()) 
