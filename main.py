@@ -11,8 +11,7 @@ import os
 import pandas as pd
 import requests
 import numpy
-# from dotenv import load_dotenv
-# load_dotenv()
+
 
 db = sdkmongo.DB()
 
@@ -377,7 +376,7 @@ def lambda_handler(event, context):
                 for index, row in df.iterrows():
                     
                     db.save_name_itent(row['_id'],"NOTIFICACION_APERTURA") 
-                    send_menu_interactive(row['origen'],"Estimado cliente, hemos dado apertura para brindarte lo mejor de nuestro menú",row['_id'],TOKEN_WA,url)
+                    send_menu_interactive_button_dinamico(row['origen'],"Estimado cliente, hemos dado apertura para brindarte lo mejor de nuestro menú",row['_id'],TOKEN_WA,url)
                     print(row['origen'])
                     db.cliente_notificacido_disponibilidad_horario(row['_id'])
             
