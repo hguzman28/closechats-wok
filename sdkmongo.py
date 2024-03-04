@@ -1,6 +1,7 @@
 import pymongo
 import re
 import datetime
+import pytz
 # from datetime import datetime, tzinfo, timezone,timedelta
 import sys
 from bson import ObjectId
@@ -178,7 +179,7 @@ class DB:
         print(result_horario)
 
         if result_horario['estado'] == 'Horario_habil':
-            today = datetime.datetime.now()
+            today = datetime.datetime.now(pytz.utc)
             fecha_limite = today - datetime.timedelta(hours=8)
     
             query={
@@ -203,6 +204,7 @@ class DB:
 
             docs = col.find(query,{"_id":1,"origen":1,"name_profile":1})
             lista_docs = list(docs)
+            print(lista_docs)
 
             if db.conversaciones.count_documents(query) != 0:
                 return lista_docs         
