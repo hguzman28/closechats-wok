@@ -371,7 +371,7 @@ def lambda_handler(event, context):
                 print("DENTRO CHATS ultimos chats_fuera_dehorario_8h")
                 df = pd.DataFrame(chats_fuera_dehorario_8h)
 
-                for index, row in df_ta3m.iterrows():
+                for index, row in df.iterrows():
                     
                     db.save_name_itent(row['_id'],"NOTIFICACION_APERTURA") 
                     send_menu_interactive_button_dinamico(row['origen'],row['_id'],"Estimado cliente, hemos abierto para darte el mejor servicio",TOKEN_WA,url)
