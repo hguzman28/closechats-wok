@@ -368,17 +368,18 @@ def lambda_handler(event, context):
 
         if chats_fuera_dehorario_8h is not None:
             try:
-                print("DENTRO chats_fuera_dehorario_8h")
+                print("DENTRO CHATS ultimos chats_fuera_dehorario_8h")
                 df = pd.DataFrame(chats_fuera_dehorario_8h)
 
-                for index, row in df.iterrows():
-                    send_menu_interactive_button_dinamico(row['origen'],"Estimado cliente, nos encontramo en horario hábil, haz tú pedido",row['_id'],TOKEN_WA,url)
-                    db.cliente_notificacido_disponibilidad_horario(row['_id'])
-
-
-
+                for index, row in df_ta3m.iterrows():
+                    
+                    db.save_name_itent(row['_id'],"NOTIFICACION_APERTURA") 
+                    send_menu_interactive_button_dinamico(row['origen'],row['_id'],"Estimado cliente, hemos abierto para darte el mejor servicio",TOKEN_WA,url)
+                    db.cliente_notificacido_disponibilidad_horario(row['_id'])  
+            
             except:
                print(sys.exc_info()) 
+            
 
     # except:
     #     return {"registro":"Fallido","conversacion":""+str(sys.exc_info())}
