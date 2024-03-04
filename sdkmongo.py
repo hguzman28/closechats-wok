@@ -1,7 +1,7 @@
 import pymongo
 import re
 import datetime
-from datetime import datetime, tzinfo, timezone,timedelta
+# from datetime import datetime, tzinfo, timezone,timedelta
 import sys
 from bson import ObjectId
 import os
@@ -179,7 +179,7 @@ class DB:
 
         if result_horario['estado'] == 'Horario_habil':
             today = datetime.now()
-            fecha_limite = today - timedelta(hours=8)
+            fecha_limite = today - datetime.timedelta(hours=8)
     
             query={
                     'origen': '573243984410',

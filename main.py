@@ -4,7 +4,6 @@ import sys
 import json
 import pymongo
 import re
-import datetime
 import sys
 from bson import ObjectId
 import sdkmongo
