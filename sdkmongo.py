@@ -178,7 +178,7 @@ class DB:
         print(result_horario)
 
         if result_horario['estado'] == 'Horario_habil':
-            today = datetime.now()
+            today = datetime.datetime.now()
             fecha_limite = today - datetime.timedelta(hours=8)
     
             query={
